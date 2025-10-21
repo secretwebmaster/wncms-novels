@@ -1,0 +1,25 @@
+{
+    "name": "secretwebmaster/wncms-novels",
+    "description": "Novel and chapter management package for WNCMS (Laravel-based CMS).",
+    "type": "library",
+    "keywords": ["wncms", "novel", "chapter", "laravel", "cms"],
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Secretwebmaster\\WncmsNovels\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Secretwebmaster\\WncmsNovels\\Providers\\WncmsNovelsServiceProvider"
+            ]
+        }
+    },
+    "require": {
+        "php": "^8.2",
+        "secretwebmaster/wncms-core": "^6.0"
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

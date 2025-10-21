@@ -1,0 +1,29 @@
+# Composer & Laravel
+/vendor
+/node_modules
+composer.lock
+/.env
+.env.*
+/bootstrap/cache
+/storage
+*.log
+
+# IDE & OS
+/.idea
+/.vscode
+.DS_Store
+Thumbs.db
+
+# PHPUnit & testing
+/phpunit.xml
+/.phpunit.result.cache
+/.phpunit.cache
+/tests
+/coverage
+/clover.xml
+
+# Build or misc artifacts
+/public/hot
+/public/storage
+npm-debug.log
+yarn-error.log
