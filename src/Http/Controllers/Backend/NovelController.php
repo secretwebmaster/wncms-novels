@@ -113,7 +113,6 @@ class NovelController extends BackendController
             ->withMessage(__('wncms::word.successfully_created'));
     }
 
-
     public function edit($id)
     {
         $novel = $this->modelClass::find($id);
@@ -126,12 +125,15 @@ class NovelController extends BackendController
         $novelTags = wncms()->tag()->getTagifyDropdownItems('novel_tag', 'name', 'name', false);
         $novelCategories = wncms()->tag()->getTagifyDropdownItems('novel_category', 'name', 'name', false);
 
+        $users = wncms()->getModel('user')::all();
+
         return $this->view('wncms-novels::novels.edit', [
             'page_title' => __('wncms-novels::word.novel'),
             'novel'      => $novel,
             'statuses'   => $this->modelClass::STATUSES,
             'novel_tags' => $novelTags,
             'novel_categories' => $novelCategories,
+            'users'      => $users,
         ]);
     }
     
