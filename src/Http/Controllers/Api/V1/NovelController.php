@@ -50,37 +50,84 @@ class NovelController extends ApiController
      */
     public function store(Request $request): JsonResponse
     {
+        // info($request->all());
         try {
 
-            // Check feature toggle
-            if ($res = $this->checkApiEnabled('enable_api_novel_store')) {
-                return $res;
+            if ($err = $this->checkEnabled('wncms_api_post_store')) return $err;
+            $auth = $this->checkAuthSetting('wncms_api_post_store', $request);
+            if (isset($auth['error'])) return $auth['error'];
+            $user = $auth['user'];
+            
+            $data = [
+                'user_id' => $user ? $user->id : null,
+                'status' => $request->input('status') ?? 'published',
+                'external_thumbnail' => $request->input('external_thumbnail'),
+                'slug' => $request->input('slug') ?? wncms()->getUniqueSlug('novels'),
+                'title' => $request->input('title') ?? '(Untitled Novel)',
+                'label' => $request->input('label'),
+                'description' => $request->input('description'),
+                'remark' => $request->input('remark'),
+                'order' => $request->input('order'),
+                'series_status' => $request->input('series_status') ?? 0,
+                'word_count' => $request->input('word_count') ?? 0,
+                'password' => $request->input('password'),
+                'price' => $request->input('price'),
+                'is_pinned' => $request->boolean('is_pinned'),
+                'is_recommended' => $request->boolean('is_recommended'),
+                'is_dmca' => $request->boolean('is_dmca'),
+                'published_at' => now(),
+                'expired_at' => $request->input('expired_at') ? \Carbon\Carbon::parse($request->input('expired_at')) : null,
+                'source' => $request->input('source'),
+                'ref_id' => $request->input('ref_id'),
+                'author' => $request->input('author'),
+                'chapter_count' => 0,
+            ];
+
+
+            $novel = Novel::where('slug', $data['slug'])->orWhere('title', $data['title'])->first();
+            if (!$novel) {
+                $novel = Novel::create($data);
+
+                // tag
+                if ($request->has('tag')) {
+                    $tags = explode(',', $request->input('tag'));
+                    $novel->syncTagsWithType($tags, 'novel_tag');
+                }
+
+                // category
+                if ($request->has('category')) {
+                    $categories = explode(',', $request->input('category'));
+                    $novel->syncTagsWithType($categories, 'novel_category');
+                }
+            }else{
+                // update specific fields
             }
 
-            // Authenticate user
-            $user = $this->authenticateByApiToken($request);
-            if ($user instanceof JsonResponse) {
-                return $user; // return error JSON if auth failed
+            if ($request->has('chapter_title') || $request->has('chapter_content')) {
+                if (!empty($request->input('chapter_title'))) {
+                    $chapter = $novel->chapters()->where('title', $request->input('chapter_title'))->first();
+                    if ($chapter) {
+                        if (!empty($request->input('chapter_content')) && $request->input('chapter_content') !== $chapter->content) {
+                            $chapter->content = $request->input('chapter_content');
+                            $chapter->save();
+                        }
+                    } else {
+                        $novel->chapters()->create([
+                            'status'      => 'published',
+                            'slug'        => wncms()->getUniqueSlug('novel_chapters'),
+                            'title'       => $request->input('chapter_title'),
+                            'content'     => $request->input('chapter_content', ''),
+                            'published_at' => now(),
+                            'user_id'     => $user ? $user->id : null,
+                        ]);
+                    }
+                }
             }
 
-            $data = $request->validate([
-                'title'         => 'required|string|max:255',
-                'slug'          => 'nullable|string|max:255|unique:novels,slug',
-                'description'   => 'nullable|string',
-                'status'        => ['required', Rule::in(['published', 'drafted', 'trashed'])],
-                'series_status' => 'nullable|integer',
-                'author'        => 'nullable|string|max:100',
-            ]);
+            $novel->updateWordCount();
 
-            $data['slug'] = $data['slug'] ?? str($data['title'])->slug('-');
-            $data['published_at'] = now();
-
-            $novel = Novel::create($data);
-
-            // Optional: clear related cache tags
-            if (method_exists(wncms()->cache(), 'flush')) {
-                wncms()->cache()->flush(['novels']);
-            }
+            wncms()->cache()->flush(['novels']);
+            wncms()->cache()->flush(['novel_chapters']);
 
             return (new BaseResource($novel))
                 ->response()

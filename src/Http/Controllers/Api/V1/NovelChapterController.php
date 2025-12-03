@@ -101,6 +101,7 @@ class NovelChapterController extends Controller
             ], 500);
         }
     }
+    
     /**
      * Update a chapter.
      */
