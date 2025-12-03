@@ -27,3 +27,6 @@ Thumbs.db
 /public/storage
 npm-debug.log
 yarn-error.log
+
+# Custom files
+diff.txt
