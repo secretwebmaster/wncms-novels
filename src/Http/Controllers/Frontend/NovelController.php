@@ -26,7 +26,7 @@ class NovelController extends FrontendController
             abort(404);
         }
 
-        return view("frontend.theme.{$this->theme}.novels.show", compact('novel'));
+        return view("frontend.themes.{$this->theme}.novels.show", compact('novel'));
     }
 
     /**
@@ -46,6 +46,6 @@ class NovelController extends FrontendController
             'cache'     => true,
         ]);
 
-        return view("frontend.theme.{$this->theme}.novels.index", compact('novels'));
+        return view("frontend.themes.{$this->theme}.novels.index", compact('novels'));
     }
 }

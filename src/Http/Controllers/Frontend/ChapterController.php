@@ -42,6 +42,6 @@ class ChapterController extends FrontendController
                 ]);
         }
 
-        return view("frontend.theme.{$this->theme}.chapters.show", compact('chapter', 'allChapters'));
+        return view("frontend.themes.{$this->theme}.chapters.show", compact('chapter', 'allChapters'));
     }
 }
