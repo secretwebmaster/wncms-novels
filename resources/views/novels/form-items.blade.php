@@ -4,6 +4,7 @@
     <div class="row mb-3">
         <label class="col-lg-3 col-form-label fw-bold fs-6">@lang('wncms::word.user')</label>
         <div class="col-lg-9 fv-row">
+            @if(!empty($users))
             <select id="user" name="user_id" class="form-select form-select-sm">
                 <option value="">@lang('wncms::word.please_select') @lang('wncms::word.user')</option>
                 @foreach(($users ?? []) as $user)
@@ -12,6 +13,9 @@
                     </option>
                 @endforeach
             </select>
+            @else
+                <input type="text" class="form-control form-control-sm" value="{{ $novel->user_id }}" disabled>
+            @endif
         </div>
     </div>
 
@@ -51,7 +55,7 @@
                     var novel_categories = @json($novel_categories);
                     new Tagify(input, {
                         whitelist: novel_categories,
-                        maxTags: 10,
+                        maxTags: 999,
                         tagTextProp: 'value',
                         dropdown: {
                             maxItems: 20,
@@ -82,7 +86,7 @@
                     var novel_tags = @json($novel_tags);
                     new Tagify(input, {
                         whitelist: novel_tags,
-                        maxTags: 10,
+                        maxTags: 999,
                         tagTextProp: 'value',
                         dropdown: {
                             maxItems: 20,
