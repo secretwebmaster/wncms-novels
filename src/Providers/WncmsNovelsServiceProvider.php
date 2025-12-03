@@ -42,6 +42,13 @@ class WncmsNovelsServiceProvider extends ServiceProvider
 
         // Register package metadata with WNCMS
         wncms()->registerPackage('wncms-novels', [
+            'base' => __DIR__ . '/../../',
+
+            'controllers' => [
+                'novel' => NovelController::class,
+                'chapter' => NovelChapterController::class,
+            ],
+
             'info' => [
                 'name' => [
                     'en'    => 'Novels',
@@ -60,23 +67,11 @@ class WncmsNovelsServiceProvider extends ServiceProvider
                 'icon'    => 'fa-solid fa-book',
             ],
 
-            'paths' => [
-                'models' => [
-                    'novel'   => Novel::class,
-                    'chapter' => NovelChapter::class,
-                ],
-                'managers' => [
-                    'novel' => NovelManager::class,
-                    'chapter' => ChapterManager::class,
-                ],
-                'controllers' => [
-                    'novel' => NovelController::class,
-                    'chapter' => NovelChapterController::class,
-                ],
-                'base' => __DIR__ . '/../../',
+            'managers' => [
+                'novel' => NovelManager::class,
+                'chapter' => ChapterManager::class,
             ],
 
-            // Backend menus
             'menus' => [
                 [
                     'title' => [
@@ -145,7 +140,11 @@ class WncmsNovelsServiceProvider extends ServiceProvider
                 ],
             ],
 
-            // Auto-register permissions
+            'models' => [
+                'novel'   => Novel::class,
+                'chapter' => NovelChapter::class,
+            ],
+
             'permissions' => [
                 'novel_index',
                 'novel_create',
