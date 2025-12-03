@@ -2,21 +2,32 @@
 
 namespace Secretwebmaster\WncmsNovels\Models;
 
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Wncms\Interfaces\ApiModelInterface;
 use Wncms\Models\BaseModel;
+use Wncms\Traits\HasApi;
 
-class Novel extends BaseModel
+class Novel extends BaseModel implements HasMedia, ApiModelInterface
 {
-    protected $table = 'novels';
+    use InteractsWithMedia;
+    use HasApi;
 
+    public static $packageId = 'wncms-novels';
+    public static $modelKey = 'novel';
+
+    protected $table = 'novels';
     protected $guarded = [];
 
+    protected static array $tagMetas = [];
+
     protected $casts = [
-        'is_pinned'       => 'boolean',
-        'is_recommended'  => 'boolean',
-        'is_dmca'         => 'boolean',
-        'price'           => 'decimal:3',
-        'published_at'    => 'datetime',
-        'expired_at'      => 'datetime',
+        'is_pinned' => 'boolean',
+        'is_recommended' => 'boolean',
+        'is_dmca' => 'boolean',
+        'price' => 'decimal:3',
+        'published_at' => 'datetime',
+        'expired_at' => 'datetime',
     ];
 
     public const ICONS = [
@@ -45,33 +56,39 @@ class Novel extends BaseModel
         'trashed',
     ];
 
-    const SERIES_STATUS_ONGOING  = 0;
+    const SERIES_STATUS_ONGOING = 0;
     const SERIES_STATUS_COMPLETED = 1;
-    const SERIES_STATUS_PAUSED   = 2;
-    const SERIES_STATUS_DROPPED  = 3;
+    const SERIES_STATUS_PAUSED = 2;
+    const SERIES_STATUS_DROPPED = 3;
     const SERIES_STATUS_UPCOMING = 4;
 
     public static array $seriesStatusLabels = [
-        self::SERIES_STATUS_ONGOING  => 'ongoing',
+        self::SERIES_STATUS_ONGOING => 'ongoing',
         self::SERIES_STATUS_COMPLETED => 'completed',
-        self::SERIES_STATUS_PAUSED   => 'paused',
-        self::SERIES_STATUS_DROPPED  => 'dropped',
+        self::SERIES_STATUS_PAUSED => 'paused',
+        self::SERIES_STATUS_DROPPED => 'dropped',
         self::SERIES_STATUS_UPCOMING => 'upcoming',
     ];
 
-    /**
-     * Accessors
-     */
     public function getSeriesStatusLabelAttribute(): string
     {
-        return __('wncms-novels.word.' . static::$seriesStatusLabels[$this->series_status] ?? 'not_available');
+        $key = static::$seriesStatusLabels[$this->series_status] ?? 'not_available';
+        return __('wncms-novels::word.' . $key);
     }
 
-    /**
-     * Relationships
-     */
     public function chapters()
     {
-        return $this->hasMany(\Secretwebmaster\WncmsNovels\Models\NovelChapter::class, 'novel_id');
+        return $this->hasMany(NovelChapter::class, 'novel_id');
+    }
+
+    public function updateWordCount()
+    {
+        $wordCount = 0;
+        foreach($this->chapters as $chapter){
+            $wordCount += mb_strlen(trim($chapter->content));
+        }
+
+        $this->word_count = $wordCount;
+        $this->save();
     }
 }

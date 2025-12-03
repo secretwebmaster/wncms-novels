@@ -2,10 +2,20 @@
 
 namespace Secretwebmaster\WncmsNovels\Models;
 
+use Spatie\MediaLibrary\HasMedia;
 use Wncms\Models\BaseModel;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Wncms\Interfaces\ApiModelInterface;
+use Wncms\Traits\HasApi;
 
-class NovelChapter extends BaseModel
+class NovelChapter extends BaseModel implements HasMedia, ApiModelInterface
 {
+    use InteractsWithMedia;
+    use HasApi;
+
+    public static $packageId = 'wncms-novels';
+    public static $modelKey = 'novel_chapter';
+
     protected $table = 'novel_chapters';
 
     protected $guarded = [];
@@ -45,6 +55,6 @@ class NovelChapter extends BaseModel
      */
     public function novel()
     {
-        return $this->belongsTo(\Secretwebmaster\WncmsNovels\Models\Novel::class, 'novel_id');
+        return $this->belongsTo(Novel::class, 'novel_id');
     }
 }
