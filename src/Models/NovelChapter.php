@@ -26,6 +26,34 @@ class NovelChapter extends BaseModel implements HasMedia, ApiModelInterface
         'expired_at'   => 'datetime',
     ];
 
+    protected static array $apiRoutes = [
+        [
+            'name' => 'api.v1.novel_chapters.index',
+            'key' => 'wncms_api_novel_chapter_index',
+            'action' => 'index',
+        ],
+        [
+            'name' => 'api.v1.novel_chapters.show',
+            'key' => 'wncms_api_novel_chapter_show',
+            'action' => 'show',
+        ],
+        [
+            'name' => 'api.v1.novel_chapters.store',
+            'key' => 'wncms_api_novel_chapter_store',
+            'action' => 'store',
+        ],
+        [
+            'name' => 'api.v1.novel_chapters.update',
+            'key' => 'wncms_api_novel_chapter_update',
+            'action' => 'update',
+        ],
+        [
+            'name' => 'api.v1.novel_chapters.delete',
+            'key' => 'wncms_api_novel_chapter_delete',
+            'action' => 'delete',
+        ],
+    ];
+
     public const ICONS = [
         'fontawesome' => 'fa-solid fa-list',
     ];
