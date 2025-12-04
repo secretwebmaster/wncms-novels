@@ -50,14 +50,14 @@ class NovelController extends ApiController
      */
     public function store(Request $request): JsonResponse
     {
-        // info($request->all());
+        info($request->all());
         try {
 
-            if ($err = $this->checkEnabled('wncms_api_post_store')) return $err;
-            $auth = $this->checkAuthSetting('wncms_api_post_store', $request);
+            if ($err = $this->checkEnabled('wncms_api_novel_store')) return $err;
+            $auth = $this->checkAuthSetting('wncms_api_novel_store', $request);
             if (isset($auth['error'])) return $auth['error'];
             $user = $auth['user'];
-            
+
             $data = [
                 'user_id' => $user ? $user->id : null,
                 'status' => $request->input('status') ?? 'published',
@@ -82,7 +82,6 @@ class NovelController extends ApiController
                 'author' => $request->input('author'),
                 'chapter_count' => 0,
             ];
-
 
             $novel = Novel::where('slug', $data['slug'])->orWhere('title', $data['title'])->first();
             if (!$novel) {
