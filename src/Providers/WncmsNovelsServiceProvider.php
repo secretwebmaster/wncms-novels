@@ -9,6 +9,7 @@ use Secretwebmaster\WncmsNovels\Services\Managers\NovelManager;
 use Secretwebmaster\WncmsNovels\Services\Managers\ChapterManager;
 use Secretwebmaster\WncmsNovels\Http\Controllers\Backend\NovelController;
 use Secretwebmaster\WncmsNovels\Http\Controllers\Backend\NovelChapterController;
+use Wncms\Facades\MacroableModels;
 
 class WncmsNovelsServiceProvider extends ServiceProvider
 {
@@ -46,7 +47,7 @@ class WncmsNovelsServiceProvider extends ServiceProvider
 
             'controllers' => [
                 'novel' => NovelController::class,
-                'chapter' => NovelChapterController::class,
+                'novel_chapter' => NovelChapterController::class,
             ],
 
             'info' => [
@@ -69,7 +70,7 @@ class WncmsNovelsServiceProvider extends ServiceProvider
 
             'managers' => [
                 'novel' => NovelManager::class,
-                'chapter' => ChapterManager::class,
+                'novel_chapter' => ChapterManager::class,
             ],
 
             'menus' => [
@@ -142,7 +143,7 @@ class WncmsNovelsServiceProvider extends ServiceProvider
 
             'models' => [
                 'novel'   => Novel::class,
-                'chapter' => NovelChapter::class,
+                'novel_chapter' => NovelChapter::class,
             ],
 
             'permissions' => [
@@ -156,5 +157,44 @@ class WncmsNovelsServiceProvider extends ServiceProvider
                 'novel_chapter_delete',
             ],
         ]);
+
+        $userModel    = wncms()->getModelClass('user');
+        $novelModel   = wncms()->getModelClass('novel');
+        $chapterModel = wncms()->getModelClass('novel_chapter');
+
+        try {
+            // User → Novels (user_id)
+            MacroableModels::addMacro($userModel, 'novels', function () use ($novelModel) {
+                return $this->hasMany($novelModel, 'user_id');
+            });
+
+            // Novel → User (user_id)
+            MacroableModels::addMacro($novelModel, 'user', function () use ($userModel) {
+                return $this->belongsTo($userModel, 'user_id');
+            });
+
+            // Novel → Chapters (novel_id)
+            MacroableModels::addMacro($novelModel, 'chapters', function () use ($chapterModel) {
+                return $this->hasMany($chapterModel, 'novel_id');
+            });
+
+            // Chapter → Novel (novel_id)
+            MacroableModels::addMacro($chapterModel, 'novel', function () use ($novelModel) {
+                return $this->belongsTo($novelModel, 'novel_id');
+            });
+
+            // Accessor: chapter_count
+            MacroableModels::addMacro($novelModel, 'getChapterCountAttribute', function () {
+                $this->loadMissing('chapters');
+                return $this->chapters->count();
+            });
+
+            // Method: latestChapter()
+            MacroableModels::addMacro($novelModel, 'latestChapter', function () {
+                return $this->chapters()->orderBy('number', 'desc')->first();
+            });
+        } catch (\Throwable $e) {
+            info('Novel macros not registered: ' . $e->getMessage());
+        }
     }
 }
