@@ -26,7 +26,14 @@ class NovelController extends FrontendController
             abort(404);
         }
 
-        return view("frontend.themes.{$this->theme}.novels.show", compact('novel'));
+        return $this->view(
+            $this->theme . "::novels.show",
+            [
+                'pageTitle' => $novel->title,
+                'novel' => $novel,
+            ],
+            "frontend.themes.{$this->theme}.novels.show",
+        );
     }
 
     /**

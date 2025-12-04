@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Secretwebmaster\WncmsNovels\Http\Controllers\Frontend\NovelController;
-use Secretwebmaster\WncmsNovels\Http\Controllers\Frontend\ChapterController;
+use Secretwebmaster\WncmsNovels\Http\Controllers\Frontend\NovelChapterController;
 
 // Novels
 Route::prefix('novel')->controller(NovelController::class)->group(function () {
@@ -11,6 +11,6 @@ Route::prefix('novel')->controller(NovelController::class)->group(function () {
 });
 
 // Chapters
-Route::prefix('chapter')->controller(ChapterController::class)->group(function () {
-    Route::get('/{slug}', 'show')->name('frontend.chapters.show');
+Route::prefix('novel/{novelSlug}chapter')->controller(NovelChapterController::class)->group(function () {
+    Route::get('/{chapterSlug}', 'show')->name('frontend.novels.chapters.show');
 });
