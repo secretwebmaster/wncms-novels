@@ -30,6 +30,34 @@ class Novel extends BaseModel implements HasMedia, ApiModelInterface
         'expired_at' => 'datetime',
     ];
 
+    protected static array $apiRoutes = [
+        [
+            'name' => 'api.v1.novels.index',
+            'key' => 'wncms_api_novel_index',
+            'action' => 'index',
+        ],
+        [
+            'name' => 'api.v1.novels.show',
+            'key' => 'wncms_api_novel_show',
+            'action' => 'show',
+        ],
+        [
+            'name' => 'api.v1.novels.store',
+            'key' => 'wncms_api_novel_store',
+            'action' => 'store',
+        ],
+        [
+            'name' => 'api.v1.novels.update',
+            'key' => 'wncms_api_novel_update',
+            'action' => 'update',
+        ],
+        [
+            'name' => 'api.v1.novels.delete',
+            'key' => 'wncms_api_novel_delete',
+            'action' => 'delete',
+        ],
+    ];
+
     public const ICONS = [
         'fontawesome' => 'fa-solid fa-book',
     ];
@@ -84,7 +112,7 @@ class Novel extends BaseModel implements HasMedia, ApiModelInterface
     public function updateWordCount()
     {
         $wordCount = 0;
-        foreach($this->chapters as $chapter){
+        foreach ($this->chapters as $chapter) {
             $wordCount += mb_strlen(trim($chapter->content));
         }
 
