@@ -105,10 +105,12 @@
                                     @include('wncms::backend.parts.modal_delete', ['model' => $novel, 'route' => route('novels.destroy', $novel), 'btn_class' => 'px-2 py-1'])
                                     <a class="btn btn-sm btn-info fw-bold px-2 py-1" href="{{ route('novel_chapters.index', ['novel' => $novel->id]) }}" target="_blank">@lang('wncms-novels::word.chapters')</a>
                                 </td>
-
                                 <td>{{ $novel->id }}</td>
                                 <td>{{ $novel->title }}</td>
-                                <td>{{ $novel->author }}</td>
+                                <td>{{ $novel->user?->username }} @if ($novel->user?->username)
+                                        (#{{ $novel->user?->id }})
+                                    @endif
+                                </td>
 
                                 {{-- status --}}
                                 <td>@include('wncms::common.table_status', ['model' => $novel])</td>

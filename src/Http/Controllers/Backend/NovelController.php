@@ -35,6 +35,8 @@ class NovelController extends BackendController
             $q->orderBy($request->order, in_array($request->sort, ['asc', 'desc']) ? $request->sort : 'desc');
         }
 
+        $q->with('user');
+
         $q->orderBy('id', 'desc');
 
         $novels = $q->paginate($request->page_size ?? 20);
