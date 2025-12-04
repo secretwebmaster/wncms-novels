@@ -41,7 +41,7 @@ class ChapterManager extends ModelManager
         // --- Ordering ---
         $this->applyOrdering(
             $q,
-            $options['order'] ?? 'chapter_number',
+            $options['order'] ?? 'number',
             $options['sequence'] ?? 'asc',
             $options['is_random'] ?? false
         );
