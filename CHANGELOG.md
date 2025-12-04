@@ -1,6 +1,6 @@
 # Change Log
 
-## v1.0.1 2025-12-03
+## v1.0.1 2025-12-04
 
 -   Improved novels and chapters index pages to match WNCMS v6 backend layout (toolbar wrappers, unified message include, `table-xs` styling, and consistent pagination/summary blocks).
 -   Added optional detailed columns for novels and chapters when `show_detail` is enabled, including slug, label, description, remark, order, series status, word count, boolean flags, price, publish/expire dates, source, ref_id, chapter_count, and author.
