@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class NovelManager extends ModelManager
 {
+    protected string $cacheKeyPrefix = 'wncms_novel';
     protected string|array $cacheTags = ['novels'];
 
     /**
@@ -18,6 +19,20 @@ class NovelManager extends ModelManager
         return Novel::class;
     }
 
+    public function getList(array $options = []): mixed
+    {
+        if (!array_key_exists('withs', $options)) {
+            $options['withs'] = ['tags', 'tags.translations'];
+        }
+
+        if (array_key_exists('withs', $options) && $options['withs'] === []) {
+            // leave as empty array: no relations loaded
+        }
+
+        return parent::getList($options);
+    }
+
+
     /**
      * Build the base query for listing novels.
      */
@@ -25,7 +40,6 @@ class NovelManager extends ModelManager
     {
         $q = $this->query();
 
-        // --- Optional filters ---
         $this->applyWebsiteId($q, $options['website_id'] ?? null);
 
         if (!empty($options['keywords'])) {
@@ -36,12 +50,16 @@ class NovelManager extends ModelManager
             $this->applyStatus($q, 'status', $options['status']);
         }
 
-        // --- Relations ---
+        // tags
+        $this->applyTagFilter($q, $options['tags'] ?? null, $options['tag_type'] ?? null);
+
+
+        // Relations
         if (!empty($options['withs'])) {
             $this->applyWiths($q, $options['withs']);
         }
 
-        // --- Ordering ---
+        // Ordering
         $this->applyOrdering(
             $q,
             $options['order'] ?? 'id',
@@ -49,7 +67,7 @@ class NovelManager extends ModelManager
             $options['is_random'] ?? false
         );
 
-        // --- Pagination / limit / offset ---
+        // Pagination / limit / offset
         $this->applyOffset($q, $options['offset'] ?? 0);
         $this->applyLimit($q, $options['count'] ?? 0);
 
