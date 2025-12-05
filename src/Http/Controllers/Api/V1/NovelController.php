@@ -50,7 +50,7 @@ class NovelController extends ApiController
      */
     public function store(Request $request): JsonResponse
     {
-        info($request->all());
+        // info($request->all());
         try {
 
             if ($err = $this->checkEnabled('wncms_api_novel_store')) return $err;
@@ -100,6 +100,7 @@ class NovelController extends ApiController
                 }
             }else{
                 // update specific fields
+                info('Novel already exists, updating existing record: ID ' . $novel->id);
             }
 
             if ($request->has('chapter_title') || $request->has('chapter_content')) {

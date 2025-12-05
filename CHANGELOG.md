@@ -1,5 +1,7 @@
 # Change Log
 
+## v1.0.2 2025-12-05
+
 ## v1.0.1 2025-12-04
 
 -   Improved novels and chapters index pages to match WNCMS v6 backend layout (toolbar wrappers, unified message include, `table-xs` styling, and consistent pagination/summary blocks).
