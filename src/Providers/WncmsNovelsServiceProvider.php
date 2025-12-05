@@ -33,14 +33,6 @@ class WncmsNovelsServiceProvider extends ServiceProvider
             ]);
         }
 
-        // Load routes if they exist
-        foreach (['web', 'api'] as $file) {
-            $path = __DIR__ . "/../../routes/{$file}.php";
-            if (file_exists($path)) {
-                $this->loadRoutesFrom($path);
-            }
-        }
-
         // Register package metadata with WNCMS
         wncms()->registerPackage('wncms-novels', [
             'base' => __DIR__ . '/../../',
@@ -157,6 +149,14 @@ class WncmsNovelsServiceProvider extends ServiceProvider
                 'novel_chapter_delete',
             ],
         ]);
+
+        // Load routes if they exist
+        foreach (['web', 'api'] as $file) {
+            $path = __DIR__ . "/../../routes/{$file}.php";
+            if (file_exists($path)) {
+                $this->loadRoutesFrom($path);
+            }
+        }
 
         $userModel    = wncms()->getModelClass('user');
         $novelModel   = wncms()->getModelClass('novel');
