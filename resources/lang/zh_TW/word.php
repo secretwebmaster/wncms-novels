@@ -27,7 +27,7 @@ return [
     'is_dmca' => 'DMCA 申訴',
     'source' => '來源',
     'ref_id' => '參考 ID',
-    'label' => '標籤',
+    'label' => '標語',
     'remark' => '備註',
     'order' => '排序',
     'password' => '密碼',
@@ -60,4 +60,6 @@ return [
     'slug_already_in_use' => '網址代稱已被使用。',
     'add_chapter' => '新增章節',
     'novel_detail' => '小說詳情',
+    'category' => '分類',
+    'tag' => '標籤',
 ];
