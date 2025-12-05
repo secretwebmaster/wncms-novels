@@ -19,7 +19,18 @@ class Novel extends BaseModel implements HasMedia, ApiModelInterface
     protected $table = 'novels';
     protected $guarded = [];
 
-    protected static array $tagMetas = [];
+    protected static array $tagMetas = [
+        [
+            'key'   => 'novel_category',
+            'short' => 'category',
+            'route' => 'frontend.novels.tag',
+        ],
+        [
+            'key'   => 'novel_tag',
+            'short' => 'tag',
+            'route' => 'frontend.novels.tag',
+        ],
+    ];
 
     protected $casts = [
         'is_pinned' => 'boolean',
