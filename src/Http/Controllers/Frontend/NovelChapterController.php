@@ -26,30 +26,44 @@ class NovelChapterController extends FrontendController
             abort(404);
         }
 
-        // Load all chapters for navigation
-        $novelId = $chapter['novel_id'] ?? $chapter->novel_id ?? null;
+        $novelId = $chapter->novel_id;
 
-        $allChapters = [];
-        if ($novelId) {
-            $allChapters = wncms()
-                ->package('wncms-novels')
-                ->novel_chapter()
-                ->getList([
-                    'wheres'   => [['novel_id', '=', $novelId]],
-                    'order'    => 'id',
-                    'sequence' => 'asc',
-                    'cache'    => true,
-                ]);
-        }
+        // Previous chapter
+        $prevChapter = wncms()
+            ->package('wncms-novels')
+            ->novel_chapter()
+            ->get([
+                'wheres' => [
+                    ['novel_id', '=', $novelId],
+                    ['id', '<', $chapter->id],
+                ],
+                'order' => 'id',
+                'sequence' => 'desc',
+                'cache' => true,
+            ]);
 
-        // return view("frontend.themes.{$this->theme}.chapters.show", compact('chapter', 'allChapters'));
+        // Next chapter
+        $nextChapter = wncms()
+            ->package('wncms-novels')
+            ->novel_chapter()
+            ->get([
+                'wheres' => [
+                    ['novel_id', '=', $novelId],
+                    ['id', '>', $chapter->id],
+                ],
+                'order' => 'id',
+                'sequence' => 'asc',
+                'cache' => true,
+            ]);
+            
         return $this->view(
             $this->theme . "::chapters.show",
             [
                 'pageTitle' => $chapter->title,
                 'novel' => $chapter->novel,
                 'chapter' => $chapter,
-                'allChapters' => $allChapters,
+                'prevChapter' => $prevChapter,
+                'nextChapter' => $nextChapter,
             ],
             "frontend.themes.{$this->theme}.chapters.show",
         );
