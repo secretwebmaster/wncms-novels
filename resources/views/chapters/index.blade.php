@@ -108,8 +108,8 @@
                                 </td>
 
                                 <td>{{ $chapter->id }}</td>
-                                <td>{{ $chapter->title }}</td>
-                                <td>{{ $chapter->novel?->title }}</td>
+                                <td><a href="{{ route('frontend.novels.chapters.show', ['novelSlug' => $chapter->novel->slug, 'chapterSlug' => $chapter->slug]) }}" target="_blank">{{ $chapter->title }}</a></td>
+                                <td><a href="{{ route('frontend.novels.show', ['slug' => $chapter->novel->slug]) }}" target="_blank">{{ $chapter->novel->title }}</a></td>
 
                                 {{-- status --}}
                                 <td>@include('wncms::common.table_status', ['model' => $chapter])</td>

@@ -35,17 +35,27 @@ class NovelController extends BackendController
             $q->orderBy($request->order, in_array($request->sort, ['asc', 'desc']) ? $request->sort : 'desc');
         }
 
+        if($request->category){
+            $q->whereHas('tags', function ($tagQ) use ($request) {
+                $tagQ->where('type', 'novel_category')
+                    ->where('name', $request->category);
+            });
+        }
+
         $q->with('user');
 
         $q->orderBy('id', 'desc');
 
         $novels = $q->paginate($request->page_size ?? 20);
 
+        $novelCategories = wncms()->getModel('tag')::where('type', 'novel_category')->whereNull('parent_id')->with('children')->get();
+
         return $this->view('wncms-novels::novels.index', [
             'page_title' => __('wncms-novels::word.novel'),
             'novels'     => $novels,
             'orders'     => $this->modelClass::ORDERS,
             'statuses'   => $this->modelClass::STATUSES,
+            'novelCategories' => $novelCategories,
         ]);
     }
 

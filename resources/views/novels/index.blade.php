@@ -21,6 +21,28 @@
                     </select>
                 </div>
 
+                {{-- Category --}}
+                <div class="col-6 col-md-auto mb-3 ms-0 ms-md-2">
+                    <select name="category" class="form-select form-select-sm">
+                        <option value="">@lang('wncms::word.select_category')</option>
+                        @foreach ($novelCategories as $category)
+                            <option value="{{ $category->name }}" @if ($category->name == request()->category) selected @endif>{{ $category->name }}</option>
+                            @php
+                                $children = $category->children;
+                            @endphp
+
+                            @while ($children->isNotEmpty())
+                                @foreach ($children as $child)
+                                    <option value="{{ $child->name }}" @if ($child->name == request()->category) selected @endif>-- {{ $child->name }}</option>
+                                @endforeach
+                                @php
+                                    $children = $child->children;
+                                @endphp
+                            @endwhile
+                        @endforeach
+                    </select>
+                </div>
+
                 <div class="col-6 col-md-auto mb-3 ms-0">
                     <input type="submit" class="btn btn-sm btn-primary fw-bold" value="@lang('wncms::word.submit')">
                 </div>
@@ -71,6 +93,8 @@
 
                             @if (request()->show_detail)
                                 <th>@lang('wncms-novels::word.slug')</th>
+                                <th>@lang('wncms-novels::word.category')</th>
+                                <th>@lang('wncms-novels::word.tag')</th>
                                 <th>@lang('wncms-novels::word.label')</th>
                                 <th>@lang('wncms-novels::word.description')</th>
                                 <th>@lang('wncms-novels::word.remark')</th>
@@ -106,7 +130,7 @@
                                     <a class="btn btn-sm btn-info fw-bold px-2 py-1" href="{{ route('novel_chapters.index', ['novel' => $novel->id]) }}" target="_blank">@lang('wncms-novels::word.chapters')</a>
                                 </td>
                                 <td>{{ $novel->id }}</td>
-                                <td>{{ $novel->title }}</td>
+                                <td><a href="{{ route('frontend.novels.show', ['slug' => $novel->slug]) }}" target="_blank">{{ $novel->title }}</a></td>
                                 <td>{{ $novel->user?->username }} @if ($novel->user?->username)
                                         (#{{ $novel->user?->id }})
                                     @endif
@@ -119,7 +143,8 @@
 
                                 @if (request()->show_detail)
                                     <td>{{ $novel->slug }}</td>
-                                    <td>{{ $novel->label }}</td>
+                                    <td class="mw-500px text-truncate">{{ $novel->TagsWithType('novel_category')->implode('name', ',') }}</td>
+                                    <td class="mw-500px text-truncate">{{ $novel->TagsWithType('novel_tag')->implode('name', ',') }}</td>
                                     <td>{{ $novel->description }}</td>
                                     <td>{{ $novel->remark }}</td>
                                     <td>{{ $novel->order }}</td>
